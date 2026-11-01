@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ cfg.site_title }}{% if cfg.school_name %} · {{ cfg.school_name }}{% endif %}{% endblock %}
+{% block description %}{{ cfg.subtitle|default:cfg.site_title }}{% endblock %}
+
+{% block body %}
+{# Икони (по мотиви от Lucide, ISC лиценз) #}
+<svg class="sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></symbol>
+  <symbol id="i-riddle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-quote" viewBox="0 0 24 24"><path d="M10 11H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v5c0 3-1.5 5-4.5 6"/><path d="M19 11h-4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v5c0 3-1.5 5-4.5 6"/></symbol>
+  <symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01"/><path d="M15 9h.01"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+  <symbol id="i-snowflake" viewBox="0 0 24 24"><path d="M2 12h20"/><path d="M12 2v20"/><path d="m20 16-4-4 4-4"/><path d="m4 8 4 4-4 4"/><path d="m16 4-4 4-4-4"/><path d="m8 20 4-4 4 4"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.9 5.6L19.5 10.5l-5.6 1.9L12 18l-1.9-5.6L4.5 10.5l5.6-1.9z"/><path d="M19 3v4"/><path d="M21 5h-4"/></symbol>
+  <symbol id="i-tree" viewBox="0 0 24 24"><path d="M12 2 7.5 8.5h2.5L6 14h3l-4 6h14l-4-6h3l-4-5.5h2.5z"/><path d="M12 20v2"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+  <symbol id="i-volume" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></symbol>
+  <symbol id="i-volume-x" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+  <symbol id="pine" viewBox="0 0 40 64"><path d="M20 0 31 17h-5l9 14h-6l10 17H1l10-17H5l9-14H9z"/><rect x="17" y="48" width="6" height="10"/></symbol>
+</svg>
+
+<div class="sky" aria-hidden="true">
+  <div class="aurora"></div>
+  <div class="stars"></div>
+  <div class="moon"></div>
+</div>
+<canvas id="snow" class="snow" aria-hidden="true"></canvas>
+
+<div class="garland" aria-hidden="true">
+  {% for _ in "xxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}<span class="garland-link"><span class="bulb"></span></span>{% endfor %}
+</div>
+
+{% if preview %}
+<div class="preview-banner" role="status">Тестов режим: всички вратички са отключени (само при DEBUG).</div>
+{% endif %}
+
+<header class="hero">
+  {% if cfg.school_name %}
+  <{% if cfg.school_url %}a href="{{ cfg.school_url }}" target="_blank" rel="noopener"{% else %}div{% endif %} class="school">
+    <img class="school-logo" src="{{ logo_url }}" alt="" width="40" height="48">
+    <span class="school-text">
+      <span class="school-name">{{ cfg.school_name }}</span>
+      {% if cfg.school_city %}<span class="school-city">{{ cfg.school_city }}</span>{% endif %}
+    </span>
+  </{% if cfg.school_url %}a{% else %}div{% endif %}>
+  {% endif %}
+
+  <h1 class="hero-title">{{ cfg.site_title }}</h1>
+  <div class="divider" aria-hidden="true">
+    <span></span><svg class="icon"><use href="#i-star"/></svg><span></span>
+  </div>
+  <p class="greeting">
+    <svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg>
+    <span>{{ cfg.greeting_text }}</span>
+    <svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg>
+  </p>
+  {% if cfg.subtitle %}<p class="hero-subtitle">{{ cfg.subtitle }}</p>{% endif %}
+
+  {% if countdown %}
+  <section class="countdown" aria-labelledby="countdown-title" data-start="{{ countdown.start_iso }}" data-now="{{ countdown.now_iso }}">
+    <h2 class="countdown-title" id="countdown-title">
+      {% if countdown.days_left == 1 %}Календарът се отваря утре!{% else %}Календарът се отваря след <span class="countdown-days">{{ countdown.days_left }}</span> дни{% endif %}
+    </h2>
+    {# Всяка цифра е вратичка: при смяна старото число се отваря и отзад се показва новото. #}
+    <div class="countdown-clock" role="timer" aria-live="off">
+      <div class="countdown-unit" data-unit="days" data-variant="1">
+        <span class="cd-frame">
+          <span class="cd-back countdown-value">{{ countdown.parts.days }}</span>
+          <span class="cd-door" aria-hidden="true"><span class="cd-face"><span class="countdown-value">{{ countdown.parts.days }}</span><span class="cd-knob"></span></span></span>
+        </span>
+        <span class="countdown-label">{% if countdown.parts.days == 1 %}ден{% else %}дни{% endif %}</span>
+      </div>
+      <div class="countdown-unit" data-unit="hours" data-variant="0">
+        <span class="cd-frame">
+          <span class="cd-back countdown-value">{{ countdown.parts.hours|stringformat:"02d" }}</span>
+          <span class="cd-door" aria-hidden="true"><span class="cd-face"><span class="countdown-value">{{ countdown.parts.hours|stringformat:"02d" }}</span><span class="cd-knob"></span></span></span>
+        </span>
+        <span class="countdown-label">{% if countdown.parts.hours == 1 %}час{% else %}часа{% endif %}</span>
+      </div>
+      <div class="countdown-unit" data-unit="minutes" data-variant="4">
+        <span class="cd-frame">
+          <span class="cd-back countdown-value">{{ countdown.parts.minutes|stringformat:"02d" }}</span>
+          <span class="cd-door" aria-hidden="true"><span class="cd-face"><span class="countdown-value">{{ countdown.parts.minutes|stringformat:"02d" }}</span><span class="cd-knob"></span></span></span>
+        </span>
+        <span class="countdown-label">{% if countdown.parts.minutes == 1 %}минута{% else %}минути{% endif %}</span>
+      </div>
+      <div class="countdown-unit" data-unit="seconds" data-variant="3">
+        <span class="cd-frame">
+          <span class="cd-back countdown-value">{{ countdown.parts.seconds|stringformat:"02d" }}</span>
+          <span class="cd-door" aria-hidden="true"><span class="cd-face"><span class="countdown-value">{{ countdown.parts.seconds|stringformat:"02d" }}</span><span class="cd-knob"></span></span></span>
+        </span>
+        <span class="countdown-label">{% if countdown.parts.seconds == 1 %}секунда{% else %}секунди{% endif %}</span>
+      </div>
+    </div>
+    <p class="countdown-note">Първата вратичка се отключва на {{ countdown.start|date:"j" }} {{ countdown.start|date:"E"|lower }} {{ countdown.start|date:"Y" }} г. в 00:00 ч.</p>
+  </section>
+  {% else %}
+  <dl class="stats">
+    {% if days_to_christmas > 0 %}
+    <div class="stat">
+      <dt class="stat-label">{% if days_to_christmas == 1 %}ден{% else %}дни{% endif %} до Коледа</dt>
+      <dd class="stat-value">{{ days_to_christmas }}</dd>
+    </div>
+    {% elif days_to_christmas == 0 %}
+    <div class="stat stat-festive">
+      <dt class="stat-label">Днес е</dt>
+      <dd class="stat-value">Коледа!</dd>
+    </div>
+    {% endif %}
+    {% if today_day %}
+    <div class="stat">
+      <dt class="stat-label">днешна вратичка</dt>
+      <dd class="stat-value">№&nbsp;{{ today_day }}</dd>
+    </div>
+    {% endif %}
+    <div class="stat">
+      <dt class="stat-label">отворени</dt>
+      <dd class="stat-value"><span id="opened-count">0</span><span class="stat-of">/<span id="opened-total">{{ cfg.last_day }}</span></span></dd>
+      <dd class="stat-bar" aria-hidden="true"><span id="opened-bar"></span></dd>
+    </div>
+  </dl>
+  {% endif %}
+</header>
+
+<main class="board-wrap">
+  <section class="board" aria-labelledby="board-label">
+    <p class="board-label" id="board-label">
+      <svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg>
+      {{ cfg.get_month_display }} {{ cfg.year }}
+      <svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg>
+    </p>
+    <div
+      id="calendar"
+      class="calendar"
+      aria-busy="true"
+      data-api="{% url 'doors:door-list' %}"
+      data-visit-api="{% url 'doors:visit' %}"
+      data-today="{{ today_iso }}"
+      data-preview="{{ preview|yesno:'1,0' }}"
+    >
+      <p class="calendar-message">Зареждаме вратичките…</p>
+      <noscript><p class="calendar-message">За да отваряш вратичките, включи JavaScript.</p></noscript>
+    </div>
+  </section>
+</main>
+
+<footer class="landscape">
+  <svg class="hills" viewBox="0 0 1440 300" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="snow-grad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#f4f9f9"/>
+        <stop offset="1" stop-color="#d5e6e5"/>
+      </linearGradient>
+      <linearGradient id="ridge-grad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#14424a"/>
+        <stop offset="1" stop-color="#0b2a33"/>
+      </linearGradient>
+    </defs>
+    <path class="ridge" d="M0 168 92 138l70 18 96-52 84 38 74-30 110 50 92-40 88 30 120-66 96 46 82-24 110 44 92-34 88 26 76-16 70 20v170H0z" fill="url(#ridge-grad)"/>
+    <path d="M0 222c170-30 330-14 520-22s340 20 520 10 300-26 400-16v106H0z" fill="#0d3436"/>
+    <g fill="#0a2a2b">
+      <use href="#pine" x="40" y="168" width="34" height="56"/>
+      <use href="#pine" x="78" y="184" width="24" height="40"/>
+      <use href="#pine" x="210" y="176" width="30" height="50"/>
+      <use href="#pine" x="420" y="172" width="36" height="58"/>
+      <use href="#pine" x="458" y="190" width="22" height="36"/>
+      <use href="#pine" x="880" y="182" width="28" height="46"/>
+      <use href="#pine" x="1120" y="170" width="36" height="58"/>
+      <use href="#pine" x="1160" y="188" width="24" height="40"/>
+      <use href="#pine" x="1330" y="176" width="32" height="52"/>
+      <use href="#pine" x="1372" y="192" width="22" height="36"/>
+    </g>
+    <g class="town">
+      <path d="M560 214h52v-20l-26-18-26 18z" fill="#0a2a2b"/>
+      <path d="M616 214h96v-30h-96z" fill="#0a2a2b"/>
+      <path d="M612 186l52-20 52 20z" fill="#5b1c22"/>
+      <path d="M718 214h44v-16l-22-16-22 16z" fill="#0a2a2b"/>
+      <g fill="#f6cf6b">
+        <rect x="578" y="198" width="7" height="8"/><rect x="592" y="198" width="7" height="8"/>
+        <rect x="626" y="192" width="7" height="7"/><rect x="642" y="192" width="7" height="7"/>
+        <rect x="658" y="192" width="7" height="7" opacity=".55"/><rect x="674" y="192" width="7" height="7"/>
+        <rect x="690" y="192" width="7" height="7"/><rect x="626" y="203" width="7" height="7" opacity=".55"/>
+        <rect x="642" y="203" width="7" height="7"/><rect x="674" y="203" width="7" height="7"/>
+        <rect x="736" y="200" width="7" height="8"/>
+      </g>
+    </g>
+    <path d="M0 252c200-26 380 10 600-6s420 26 620 10c100-8 170-6 220-2v46H0z" fill="url(#snow-grad)"/>
+  </svg>
+  <div class="footer-snow">
+    {% if cfg.school_name %}
+    <div class="footer-school">
+      <img src="{{ logo_url }}" alt="" width="30" height="36">
+      <div>
+        <p class="footer-name">{{ cfg.school_name }}</p>
+        <p class="footer-meta">
+          {% if cfg.school_city %}{{ cfg.school_city }}{% endif %}
+          {% if cfg.school_url %}{% if cfg.school_city %} · {% endif %}<a href="{{ cfg.school_url }}" target="_blank" rel="noopener">{{ school_host }}</a>{% endif %}
+        </p>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</footer>
+
+<div class="dock" role="toolbar" aria-label="Настройки">
+  <button type="button" class="dock-btn" id="snow-toggle" aria-pressed="true" aria-label="Сняг">
+    <svg class="icon" aria-hidden="true"><use href="#i-snowflake"/></svg>
+    <span class="dock-label">Сняг</span>
+  </button>
+  <button type="button" class="dock-btn" id="music-toggle" aria-pressed="false" aria-label="Музика">
+    <svg class="icon" aria-hidden="true"><use href="#i-volume-x"/></svg>
+    <span class="dock-label">Музика</span>
+  </button>
+  <button type="button" class="dock-btn" id="reset-doors" aria-label="Затвори всички вратички">
+    <svg class="icon" aria-hidden="true"><use href="#i-reset"/></svg>
+    <span class="dock-label">Затвори всички</span>
+  </button>
+</div>
+
+<dialog id="door-modal" class="modal" aria-labelledby="modal-title">
+  <article class="modal-card">
+    <header class="modal-head">
+      <button type="button" class="modal-close" aria-label="Затвори">
+        <svg class="icon" aria-hidden="true"><use href="#i-x"/></svg>
+      </button>
+      <span class="modal-badge" aria-hidden="true">
+        <svg class="icon"><use class="modal-icon" href="#i-gift"/></svg>
+      </span>
+    </header>
+    <div class="modal-body">
+      <p class="modal-meta"><span class="modal-type"></span><span class="modal-dot" aria-hidden="true">✦</span><span class="modal-day"></span></p>
+      <h2 id="modal-title" class="modal-title"></h2>
+      <figure class="modal-figure" hidden>
+        <img alt="">
+      </figure>
+      <div class="modal-text"></div>
+      <div class="modal-answer" hidden>
+        <button type="button" class="btn-answer" aria-expanded="false">Покажи отговора</button>
+        <p class="answer-text" hidden></p>
+      </div>
+      <div class="modal-reactions">
+        <button type="button" class="react-btn react-done" aria-pressed="false" hidden>
+          <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
+          <span class="react-done-label">Изпълних предизвикателството!</span>
+        </button>
+        <button type="button" class="react-btn react-heart" aria-pressed="false" aria-label="Харесва ми">
+          <svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg>
+          <span class="react-heart-count">0</span>
+        </button>
+      </div>
+      <p class="react-done-count" hidden></p>
+    </div>
+    {% if cfg.school_name %}
+    <footer class="modal-foot">
+      <img src="{{ logo_url }}" alt="" width="16" height="19">
+      <span>{{ cfg.school_name }} · Адвент {{ cfg.year }}</span>
+    </footer>
+    {% endif %}
+  </article>
+</dialog>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<audio id="music" src="{% static 'music/theme.mp3' %}" loop preload="none"></audio>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/snow.js' %}" defer></script>
+<script src="{% static 'js/app.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Django
+.env
+db.sqlite3
+staticfiles/
+media/*
+!media/.gitkeep
+
+# Claude Code (локални настройки)
+.claude/settings.local.json
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
