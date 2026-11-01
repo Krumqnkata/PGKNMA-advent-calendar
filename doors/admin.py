@@ -8,7 +8,7 @@ from django.utils.html import format_html
 from unfold.admin import ModelAdmin
 from unfold.decorators import action, display
 
-from .models import AdventSettings, DailyStats, Door, DoorStats
+from .models import AdventSettings, DailyStats, Door, DoorStats, LoginAttempt
 
 
 @admin.register(AdventSettings)
@@ -21,7 +21,7 @@ class AdventSettingsAdmin(ModelAdmin):
                 "description": "Вратичка N се отключва на N-ия ден от избрания месец (часова зона Europe/Sofia).",
             },
         ),
-        ("Текстове на сайта", {"fields": ("site_title", "subtitle", "greeting")}),
+        ("Текстове на сайта", {"fields": ("site_title", "subtitle", "greeting", "finished_message")}),
         ("Училище", {"fields": ("school_name", "school_city", "school_url", "logo")}),
     )
 
@@ -209,3 +209,19 @@ class DoorStatsAdmin(ReadOnlyStatsAdmin):
     @display(description="тип", ordering="door__type")
     def door_type(self, obj):
         return obj.door.get_type_display()
+
+
+# Опити за вход с грешна парола (django-axes). Изтриването на запис отключва входа.
+@admin.register(LoginAttempt)
+class LoginAttemptAdmin(ModelAdmin):
+    list_display = ("username", "ip_address", "failures_since_start", "attempt_time")
+    search_fields = ("username", "ip_address")
+    ordering = ("-attempt_time",)
+    fields = ("username", "ip_address", "user_agent", "failures_since_start", "attempt_time", "path_info")
+    readonly_fields = fields
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False

@@ -20,6 +20,12 @@ def calendar_start(cfg):
     return datetime.combine(door_date(1, cfg), time.min, tzinfo=ZoneInfo(settings.ADVENT_TIME_ZONE))
 
 
+def is_finished(cfg, today=None):
+    """Последният ден е минал: календарът е приключил, всички вратички остават отворени."""
+    today = today or today_sofia()
+    return today > door_date(cfg.last_day, cfg)
+
+
 def is_unlocked(day, cfg, today=None):
     today = today or today_sofia()
     return door_date(day, cfg) <= today

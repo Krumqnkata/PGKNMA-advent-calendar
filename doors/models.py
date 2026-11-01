@@ -1,5 +1,6 @@
 import calendar
 
+from axes.models import AccessAttempt
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -69,6 +70,12 @@ class AdventSettings(models.Model):
         max_length=200,
         blank=True,
         help_text="Показва се като панделка под заглавието. Ако е празно: „Весели празници и успешна <следващата> година!“.",
+    )
+    finished_message = models.CharField(
+        "съобщение след края",
+        max_length=200,
+        default="Календарът приключи – благодарим, че бяхте с нас!",
+        help_text="Показва се след последния ден. Вратичките остават отворени.",
     )
     school_name = models.CharField(
         "име на училището",
@@ -217,3 +224,12 @@ class DailyStats(models.Model):
 
     def __str__(self):
         return self.date.strftime("%d.%m.%Y")
+
+
+class LoginAttempt(AccessAttempt):
+    """Неуспешни опити за вход в админа (django-axes), с български имена за админ панела."""
+
+    class Meta:
+        proxy = True
+        verbose_name = "опит за вход с грешна парола"
+        verbose_name_plural = "опити за вход с грешна парола"

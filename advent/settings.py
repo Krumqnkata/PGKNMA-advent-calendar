@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "doors",
+    "axes",
 ]
 
 MIDDLEWARE = [
@@ -65,7 +66,34 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # Трябва да е последен: блокира входа след твърде много грешни пароли.
+    "axes.middleware.AxesMiddleware",
 ]
+
+AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesStandaloneBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+
+# Админ панел: адресът не е стандартният /admin/, за да не е лесна мишена.
+# В продукция задай свой, трудно отгатваем адрес в ADMIN_URL (напр. upravlenie-k7x2/).
+
+ADMIN_URL = os.environ.get("ADMIN_URL", "upravlenie/").strip("/") + "/"
+
+
+# Ограничение на опитите за вход (django-axes): 5 грешни пароли за едно и също
+# потребителско име от един и същ IP адрес → блокиране за 1 час. Пазят се само
+# неуспешните опити и само докато изтече блокирането; пълният дневник е изключен.
+
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = 1  # часа
+AXES_LOCKOUT_PARAMETERS = [["username", "ip_address"]]
+AXES_RESET_ON_SUCCESS = True
+AXES_USE_ATTEMPT_EXPIRATION = True
+AXES_DISABLE_ACCESS_LOG = True
+AXES_ENABLE_ADMIN = False  # регистрираме го сами, в стила на Unfold
+AXES_LOCKOUT_TEMPLATE = "doors/locked_out.html"
 
 ROOT_URLCONF = "advent.urls"
 
@@ -250,6 +278,11 @@ UNFOLD = {
                         "title": "Групи",
                         "icon": "group",
                         "link": reverse_lazy("admin:auth_group_changelist"),
+                    },
+                    {
+                        "title": "Грешни опити за вход",
+                        "icon": "lock",
+                        "link": reverse_lazy("admin:doors_loginattempt_changelist"),
                     },
                 ],
             },

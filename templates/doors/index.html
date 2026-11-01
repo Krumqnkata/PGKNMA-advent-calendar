@@ -105,6 +105,13 @@
     <p class="countdown-note">Първата вратичка се отключва на {{ countdown.start|date:"j" }} {{ countdown.start|date:"E"|lower }} {{ countdown.start|date:"Y" }} г. в 00:00 ч.</p>
   </section>
   {% else %}
+  {% if finished %}
+  <section class="finale" aria-labelledby="finale-title">
+    <span class="finale-star" aria-hidden="true"><svg class="icon"><use href="#i-star"/></svg></span>
+    <h2 class="finale-title" id="finale-title">{{ cfg.finished_message }}</h2>
+    <p class="finale-note">Всички {{ cfg.last_day }} вратички остават отворени – можеш да ги разгледаш отново по всяко време.</p>
+  </section>
+  {% endif %}
   <dl class="stats">
     {% if days_to_christmas > 0 %}
     <div class="stat">

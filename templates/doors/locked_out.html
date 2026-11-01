@@ -1,0 +1,44 @@
+{% load static %}<!doctype html>
+<html lang="bg">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Входът е временно блокиран</title>
+  <link rel="icon" type="image/png" href="{% static 'img/pgknma-logo.png' %}">
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      background: radial-gradient(120% 80% at 50% 0%, #0e3a3d, #040d1a 70%);
+      color: #eef5f3;
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+    main {
+      max-width: 440px;
+      padding: 32px 28px;
+      border: 1px solid rgba(227, 182, 91, .45);
+      border-radius: 20px;
+      background: rgba(4, 18, 26, .75);
+      text-align: center;
+    }
+    img { width: 44px; height: auto; padding: 6px; border-radius: 50%; background: #fff; }
+    h1 { margin: 16px 0 8px; color: #f7e0a3; font-size: 1.4rem; }
+    p { margin: 0 0 10px; color: #a9c2bd; line-height: 1.55; }
+    a { color: #8fd3c3; }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="{% static 'img/pgknma-logo.svg' %}" alt="">
+    <h1>Входът е временно блокиран</h1>
+    <p>Имаше твърде много опити с грешна парола. Опитай отново след около 1 час.</p>
+    <p>Ако си забравил паролата, обърни се към администратора на сайта.</p>
+    <p><a href="/">← Към адвент календара</a></p>
+  </main>
+</body>
+</html>

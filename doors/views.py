@@ -50,6 +50,7 @@ def index(request):
         "today_day": unlock.today_door_day(cfg, today),
         "days_to_christmas": (date(cfg.year, 12, 25) - today).days,
         "countdown": countdown(cfg, today),
+        "finished": unlock.is_finished(cfg, today),
         "logo_url": cfg.logo.url if cfg.logo else static("img/pgknma-logo.svg"),
         "school_host": urlparse(cfg.school_url).netloc.removeprefix("www."),
         "preview": unlock.preview_enabled(request),

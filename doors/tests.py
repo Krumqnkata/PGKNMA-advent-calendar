@@ -246,3 +246,50 @@ class GreetingTests(TestCase):
         cfg.save()
         with on(1):
             self.assertContains(self.client.get(reverse("doors:index")), "Честито Рождество!")
+
+
+class FinishedTests(TestCase):
+    def test_message_after_last_day(self):
+        for day, month, year in ((26, 12, 2026), (10, 1, 2027)):
+            with on(day, month=month, year=year):
+                response = self.client.get(reverse("doors:index"))
+            self.assertContains(response, "Календарът приключи – благодарим, че бяхте с нас!")
+
+    def test_no_message_on_last_day(self):
+        with on(24):
+            response = self.client.get(reverse("doors:index"))
+        self.assertNotContains(response, "Календарът приключи")
+
+    def test_all_doors_stay_open_after_the_end(self):
+        Door.objects.create(day=24, title="Последна", is_published=True)
+        with on(10, month=1, year=2027):
+            self.assertEqual(self.client.get(reverse("doors:door-detail", args=[24])).status_code, 200)
+
+
+class AdminSecurityTests(TestCase):
+    def setUp(self):
+        get_user_model().objects.create_superuser("admin", "admin@example.com", "correct-horse")
+
+    def test_admin_is_not_at_default_url(self):
+        self.assertTrue(reverse("admin:index").startswith("/upravlenie/"))
+        self.assertEqual(self.client.get("/admin/").status_code, 404)
+
+    def test_lockout_after_five_wrong_passwords(self):
+        url = reverse("admin:login")
+        for _ in range(5):
+            self.client.post(url, {"username": "admin", "password": "wrong"})
+        response = self.client.post(url, {"username": "admin", "password": "correct-horse"})
+        self.assertEqual(response.status_code, 429)
+        self.assertContains(response, "Входът е временно блокиран", status_code=429)
+
+    def test_correct_password_still_works(self):
+        url = reverse("admin:login")
+        self.client.post(url, {"username": "admin", "password": "wrong"})
+        response = self.client.post(url, {"username": "admin", "password": "correct-horse"})
+        self.assertEqual(response.status_code, 302)
+
+    def test_login_attempts_admin_page(self):
+        self.client.post(reverse("admin:login"), {"username": "admin", "password": "wrong"})
+        self.client.force_login(get_user_model().objects.get(username="admin"))
+        response = self.client.get(reverse("admin:doors_loginattempt_changelist"))
+        self.assertContains(response, "admin")
