@@ -60,7 +60,7 @@ class DoorAdmin(ModelAdmin):
     readonly_fields = ("image_preview",)
     fieldsets = (
         ("Основно", {"fields": ("day", "type", "is_published")}),
-        ("Съдържание", {"fields": ("title", "text", "image", "image_preview")}),
+        ("Съдържание", {"fields": ("title", "text", "image", "image_preview", "image_credit", "image_source")}),
         (
             "Гатанка",
             {

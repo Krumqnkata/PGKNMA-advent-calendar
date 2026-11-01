@@ -417,6 +417,25 @@
   var modalText = modal.querySelector(".modal-text");
   var modalFigure = modal.querySelector(".modal-figure");
   var modalImage = modalFigure.querySelector("img");
+  var modalCredit = modalFigure.querySelector(".modal-credit");
+
+  // Автор и лиценз под снимката; връзката към източника е само ако е http(s).
+  function renderCredit(credit, source) {
+    modalCredit.textContent = "";
+    modalCredit.hidden = !credit;
+    if (!credit) return;
+    modalCredit.appendChild(document.createTextNode("Снимка: "));
+    if (source && /^https?:\/\//i.test(source)) {
+      var link = document.createElement("a");
+      link.href = source;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = credit;
+      modalCredit.appendChild(link);
+    } else {
+      modalCredit.appendChild(document.createTextNode(credit));
+    }
+  }
   var modalAnswer = modal.querySelector(".modal-answer");
   var answerBtn = modal.querySelector(".btn-answer");
   var answerText = modal.querySelector(".answer-text");
@@ -508,6 +527,7 @@
       modalImage.src = content.image;
       modalImage.alt = content.title;
       modalFigure.hidden = false;
+      renderCredit(content.image_credit, content.image_source);
     } else {
       modalImage.removeAttribute("src");
       modalFigure.hidden = true;

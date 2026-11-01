@@ -1,5 +1,7 @@
 import json
+import tempfile
 from datetime import date
+from pathlib import Path
 from unittest import mock
 
 from django.contrib.auth import get_user_model
@@ -134,7 +136,8 @@ class AdminAndSeedTests(TestCase):
         self.assertRedirects(response, reverse("admin:doors_adventsettings_change", args=[1]))
 
     def test_seed_doors(self):
-        call_command("seed_doors", stdout=mock.MagicMock())
+        with tempfile.TemporaryDirectory() as media, override_settings(MEDIA_ROOT=media):
+            call_command("seed_doors", stdout=mock.MagicMock())
         self.assertEqual(Door.objects.filter(is_published=True).count(), 24)
         self.assertEqual(set(Door.objects.values_list("type", flat=True)), set(Door.Type.values))
 
@@ -359,3 +362,40 @@ class AdminUrlSettingTests(TestCase):
         for bad in ("<upravlenie>/", "<upravlenie-k7x2>/", "upr avlenie/", "", "/"):
             with self.assertRaises(ImproperlyConfigured, msg=bad):
                 clean_admin_url(bad)
+
+
+class SeedContentTests(TestCase):
+    def setUp(self):
+        self.media = tempfile.TemporaryDirectory()
+        self.addCleanup(self.media.cleanup)
+        self.enterContext(override_settings(MEDIA_ROOT=self.media.name))
+
+    def test_every_sample_image_exists_and_is_credited(self):
+        from .management.commands.seed_doors import SAMPLE_DOORS, SEED_IMAGES
+
+        self.assertEqual(len(SAMPLE_DOORS), 25)
+        with_images = [d for d in SAMPLE_DOORS if d.get("image")]
+        self.assertGreaterEqual(len(with_images), 6)
+        for data in with_images:
+            self.assertTrue((SEED_IMAGES / data["image"]).is_file(), data["image"])
+            self.assertTrue(data.get("image_credit"), data["image"])
+            self.assertTrue(data.get("image_source", "").startswith("https://commons.wikimedia.org/"))
+
+    def test_seed_attaches_images_and_api_returns_credit(self):
+        call_command("seed_doors", stdout=mock.MagicMock())
+        door = Door.objects.get(day=3)
+        self.assertRegex(door.image.name, r"^doors/[0-9a-f]{32}\.jpg$")
+        self.assertTrue(Path(door.image.path).is_file())
+        with on(5):
+            data = self.client.get(reverse("doors:door-detail", args=[3])).json()
+        self.assertIn("обществено достояние", data["image_credit"])
+        self.assertTrue(data["image_source"].startswith("https://"))
+
+    def test_force_replaces_image_and_removes_old_file(self):
+        call_command("seed_doors", stdout=mock.MagicMock())
+        old_path = Path(Door.objects.get(day=3).image.path)
+        call_command("seed_doors", "--force", stdout=mock.MagicMock())
+        new_path = Path(Door.objects.get(day=3).image.path)
+        self.assertNotEqual(old_path, new_path)
+        self.assertFalse(old_path.exists())
+        self.assertTrue(new_path.exists())

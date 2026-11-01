@@ -150,7 +150,7 @@ sudo chgrp www-data .env
 .venv/bin/python manage.py migrate
 .venv/bin/python manage.py collectstatic --noinput
 .venv/bin/python manage.py createsuperuser
-.venv/bin/python manage.py seed_doors        # по избор: 24 примерни вратички
+.venv/bin/python manage.py seed_doors        # по избор: 25 готови вратички, 8 от тях със снимки
 .venv/bin/python manage.py check --deploy
 ```
 
@@ -226,6 +226,13 @@ cd /var/www/koleda
 Скриптът прави `git pull`, инсталира пакетите, пуска миграциите и `collectstatic` и рестартира
 услугата.
 
+Команди, които пишат в `media/` (например повторно зареждане на примерните вратички със
+снимки), се пускат като `www-data`, защото папката е негова:
+
+```bash
+sudo -u www-data .venv/bin/python manage.py seed_doors --force
+```
+
 ## 13. Архивиране
 
 Всяка нощ в 03:30: база + качени снимки, пазят се 14 дни.
@@ -256,6 +263,8 @@ gunzip -c /var/backups/koleda/db-<дата>.sql.gz | sudo mysql koleda
 | **403 CSRF** при вход в админа | `CSRF_TRUSTED_ORIGINS=https://koleda.pgknma.space`; vhost-ът праща `X-Forwarded-Proto https` |
 | Страницата е без стилове | `collectstatic` не е пуснат или пътят в `Alias /static/` е грешен |
 | Снимките дават 403/404 | Права на `media/` (стъпка 8) |
+| `PermissionError: … media/doors` при `manage.py` | Пусни командата като `sudo -u www-data .venv/bin/python manage.py …` |
+| `Unknown column …` | Не са пуснати миграциите → `.venv/bin/python manage.py migrate` и `sudo systemctl restart koleda` |
 | В „Грешни опити за вход“ всички IP-та са `127.0.0.1` | Липсват редовете `RequestHeader … X-Forwarded-For` във vhost-а |
 | Не тръгва след рестарт: `Can't connect to MySQL` | `DB_HOST=127.0.0.1` и потребителят е `'koleda'@'127.0.0.1'` |
 

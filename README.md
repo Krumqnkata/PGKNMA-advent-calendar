@@ -75,7 +75,7 @@ GRANT ALL PRIVILEGES ON test_advent.* TO 'advent'@'localhost';
 ```powershell
 python manage.py migrate
 python manage.py createsuperuser
-python manage.py seed_doors          # 24 примерни вратички (--force презаписва)
+python manage.py seed_doors          # 25 готови вратички, 8 със снимки (--force презаписва)
 python manage.py runserver
 ```
 

@@ -101,6 +101,8 @@ def door_detail(request, day):
             "title": door.title,
             "text": door.text,
             "image": request.build_absolute_uri(door.image.url) if door.image else None,
+            "image_credit": door.image_credit or None,
+            "image_source": door.image_source or None,
             "answer": door.answer or None,
             **stats.door_counts(door, cfg.year),
         }

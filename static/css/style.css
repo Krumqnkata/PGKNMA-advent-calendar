@@ -1482,6 +1482,24 @@ a.school:hover {
   background: #efe6cf;
 }
 
+.modal-credit {
+  margin-top: 6px;
+  color: #8a8270;
+  font-size: .72rem;
+  line-height: 1.4;
+  text-align: right;
+}
+
+.modal-credit a {
+  color: inherit;
+  text-decoration-color: rgba(138, 130, 112, .5);
+  text-underline-offset: 2px;
+}
+
+.modal-credit a:hover {
+  color: #5c5546;
+}
+
 .modal-answer {
   margin-top: 20px;
   text-align: center;

@@ -168,6 +168,18 @@ class Door(models.Model):
         blank=True,
         help_text="По избор. Препоръчително за тип „Снимка“.",
     )
+    image_credit = models.CharField(
+        "автор и лиценз на снимката",
+        max_length=300,
+        blank=True,
+        help_text="Показва се под снимката, напр. „NASA / Bill Anders · обществено достояние“. "
+        "Задължително за снимки с лиценз CC BY / CC BY-SA.",
+    )
+    image_source = models.URLField(
+        "източник на снимката",
+        blank=True,
+        help_text="Връзка към страницата на снимката (напр. в Wikimedia Commons).",
+    )
     answer = models.CharField(
         "отговор",
         max_length=300,
