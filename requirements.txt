@@ -1,6 +1,6 @@
 Django>=5.2,<6.0
 django-unfold>=0.60
 django-axes>=8.0
-mysqlclient>=2.2
+mysqlclient>=2.3.0
 Pillow>=13.0.0
 python-dotenv>=1.2.4
