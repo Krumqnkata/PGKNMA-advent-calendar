@@ -195,6 +195,9 @@ ADVENT_MONTH = 12
 ADVENT_YEAR = 2026
 ADVENT_TIME_ZONE = "Europe/Sofia"
 
+# Връзка към изходния код в долната част на сайта (AGPL-3.0, раздел 13).
+SOURCE_CODE_URL = os.environ.get("SOURCE_CODE_URL", "https://github.com/Krumqnkata/PGKNMA-advent-calendar")
+
 
 # Админ панел (django-unfold)
 

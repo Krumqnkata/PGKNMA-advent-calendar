@@ -1274,8 +1274,21 @@ a.school:hover {
   text-underline-offset: 3px;
 }
 
-.footer-meta a:hover {
+.footer-meta a:hover,
+.footer-source a:hover {
   text-decoration-color: currentColor;
+}
+
+.footer-source {
+  margin: 0;
+  color: var(--teal-dark);
+  font-size: .78rem;
+  font-weight: 600;
+}
+
+.footer-source a {
+  text-decoration-color: rgba(39, 102, 90, .4);
+  text-underline-offset: 3px;
 }
 
 /* --- Плаващи бутони ----------------------------------------------------- */

@@ -2,6 +2,7 @@ import json
 from datetime import date
 from urllib.parse import urlparse
 
+from django.conf import settings
 from django.http import Http404, JsonResponse
 from django.shortcuts import render
 from django.templatetags.static import static
@@ -54,6 +55,7 @@ def index(request):
         "logo_url": cfg.logo.url if cfg.logo else static("img/pgknma-logo.svg"),
         "school_host": urlparse(cfg.school_url).netloc.removeprefix("www."),
         "preview": unlock.preview_enabled(request),
+        "source_code_url": settings.SOURCE_CODE_URL,
     }
     return render(request, "doors/index.html", context)
 
