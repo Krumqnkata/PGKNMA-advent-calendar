@@ -7,6 +7,7 @@ environment променливи. Ако в корена на проекта и�
 """
 
 import os
+import re
 from pathlib import Path
 
 from django.core.exceptions import ImproperlyConfigured
@@ -79,7 +80,18 @@ AUTHENTICATION_BACKENDS = [
 # Админ панел: адресът не е стандартният /admin/, за да не е лесна мишена.
 # В продукция задай свой, трудно отгатваем адрес в ADMIN_URL (напр. upravlenie-k7x2/).
 
-ADMIN_URL = os.environ.get("ADMIN_URL", "upravlenie/").strip("/") + "/"
+def clean_admin_url(value):
+    """Само букви, цифри, „-“ и „_“: знаци като < > биха превърнали адреса в шаблон и админът дава 500."""
+    path = value.strip().strip("/")
+    if not re.fullmatch(r"[A-Za-z0-9_-]+(/[A-Za-z0-9_-]+)*", path):
+        raise ImproperlyConfigured(
+            f"ADMIN_URL={value!r} съдържа непозволени знаци. Позволени са латински букви, "
+            "цифри, „-“ и „_“, без < >, напр. ADMIN_URL=upravlenie-k7x2/"
+        )
+    return path + "/"
+
+
+ADMIN_URL = clean_admin_url(os.environ.get("ADMIN_URL", "upravlenie/"))
 
 
 # Ограничение на опитите за вход (django-axes): 5 грешни пароли за едно и също
@@ -174,6 +186,24 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
+
+# В продукция имената на CSS/JS съдържат хеш (style.3f2a9c.css): при всяка промяна
+# адресът се сменя и кешът на Cloudflare и браузърите не пречи. Изисква collectstatic.
+if not DEBUG:
+    STORAGES = {
+        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"},
+    }
+
+
+# Грешките отиват на стандартния изход → journalctl -u koleda
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "root": {"handlers": ["console"], "level": "WARNING"},
+}
 
 
 # Сигурност в продукция

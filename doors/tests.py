@@ -332,3 +332,30 @@ class YearSeparationTests(TestCase):
         response = self.client.get(reverse("admin:doors_door_changelist"))
         self.assertEqual(response.context["cl"].result_count, 1)
         self.assertEqual(response.context["cl"].result_list[0].stat_hearts, 3)
+
+
+class ImagePathTests(TestCase):
+    def test_uploaded_images_get_random_names(self):
+        from .models import door_image_path
+
+        first = door_image_path(None, "Снежанка.JPG")
+        second = door_image_path(None, "Снежанка.JPG")
+        self.assertRegex(first, r"^doors/[0-9a-f]{32}\.jpg$")
+        self.assertNotEqual(first, second)
+
+
+class AdminUrlSettingTests(TestCase):
+    def test_valid_admin_urls(self):
+        from advent.settings import clean_admin_url
+
+        self.assertEqual(clean_admin_url("upravlenie-k7x2/"), "upravlenie-k7x2/")
+        self.assertEqual(clean_admin_url("/school/admin_x"), "school/admin_x/")
+
+    def test_placeholder_brackets_are_rejected(self):
+        from django.core.exceptions import ImproperlyConfigured
+
+        from advent.settings import clean_admin_url
+
+        for bad in ("<upravlenie>/", "<upravlenie-k7x2>/", "upr avlenie/", "", "/"):
+            with self.assertRaises(ImproperlyConfigured, msg=bad):
+                clean_admin_url(bad)

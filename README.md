@@ -109,79 +109,11 @@ python manage.py runserver
 Запази файла със същото име `theme.mp3`. Браузърите блокират автоматичното пускане на звук,
 затова музиката тръгва само след натискане на бутона „Музика“; изборът се помни в `localStorage`.
 
-## Deploy на Apache + mod_wsgi (Linux)
+## Пускане на сървър
 
-1. Качи проекта, напр. в `/var/www/advent`, и създай виртуална среда:
-
-   ```bash
-   cd /var/www/advent
-   python3 -m venv .venv
-   .venv/bin/pip install -r requirements.txt
-   sudo apt install libapache2-mod-wsgi-py3   # ако още не е инсталиран
-   ```
-
-   За `mysqlclient` на Debian/Ubuntu: `sudo apt install python3-dev default-libmysqlclient-dev build-essential pkg-config`.
-
-2. Създай `/var/www/advent/.env`:
-
-   ```ini
-   SECRET_KEY=<дълъг-случаен-ключ>
-   DEBUG=False
-   ALLOWED_HOSTS=advent.example.bg
-   CSRF_TRUSTED_ORIGINS=https://advent.example.bg
-   DB_NAME=advent
-   DB_USER=advent
-   DB_PASSWORD=...
-   DB_HOST=127.0.0.1
-   ```
-
-   Ако сайтът е без HTTPS, добави `SECURE_COOKIES=False`, иначе входът в админа няма да работи.
-
-3. Миграции, статични файлове и права:
-
-   ```bash
-   .venv/bin/python manage.py migrate
-   .venv/bin/python manage.py collectstatic --noinput
-   .venv/bin/python manage.py createsuperuser
-   .venv/bin/python manage.py seed_doors
-   sudo chown -R www-data:www-data media
-   sudo chmod 640 .env && sudo chown root:www-data .env
-   ```
-
-4. Виртуален хост `/etc/apache2/sites-available/advent.conf`:
-
-   ```apache
-   <VirtualHost *:80>
-       ServerName advent.example.bg
-
-       WSGIDaemonProcess advent python-home=/var/www/advent/.venv python-path=/var/www/advent
-       WSGIProcessGroup advent
-       WSGIScriptAlias / /var/www/advent/advent/wsgi.py
-
-       <Directory /var/www/advent/advent>
-           <Files wsgi.py>
-               Require all granted
-           </Files>
-       </Directory>
-
-       Alias /static/ /var/www/advent/staticfiles/
-       <Directory /var/www/advent/staticfiles>
-           Require all granted
-       </Directory>
-
-       Alias /media/ /var/www/advent/media/
-       <Directory /var/www/advent/media>
-           Require all granted
-           Options -Indexes
-       </Directory>
-   </VirtualHost>
-   ```
-
-   ```bash
-   sudo a2ensite advent && sudo systemctl reload apache2
-   ```
-
-   След всяка промяна на кода: `collectstatic` и `sudo touch advent/wsgi.py` (рестартира приложението).
+Пълен гайд стъпка по стъпка (Cloudflare → Apache → Waitress → Django + MySQL,
+субдомейн `koleda.pgknma.space`): **[DEPLOY.md](DEPLOY.md)**.
+Готовите конфигурации са в папка [`deploy/`](deploy/).
 
 ## Структура
 
@@ -190,7 +122,10 @@ advent/            настройки на проекта, urls, wsgi
 doors/             модели (Door, AdventSettings), API, админ, seed_doors, тестове
 templates/         base.html, doors/index.html
 static/            css/style.css, js/app.js, js/snow.js, music/theme.mp3, img/pgknma-logo.(svg|png)
-media/             качени снимки (doors/…)
+media/             качени снимки (doors/… със случайни имена)
+deploy/           Apache vhost, systemd услуга, update.sh
+serve.py          production сървър (Waitress зад Apache)
+DEPLOY.md         гайд за пускане на сървъра
 ```
 
 ## Лиценз

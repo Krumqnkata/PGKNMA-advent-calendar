@@ -1,4 +1,6 @@
 import calendar
+import uuid
+from pathlib import Path
 
 from axes.models import AccessAttempt
 from django.conf import settings
@@ -21,6 +23,12 @@ MONTH_CHOICES = [
     (11, "Ноември"),
     (12, "Декември"),
 ]
+
+
+def door_image_path(instance, filename):
+    """Случайно име, за да не може адресът на снимката за бъдещ ден да се познае."""
+    extension = Path(filename).suffix.lower()
+    return f"doors/{uuid.uuid4().hex}{extension}"
 
 
 def default_last_day():
@@ -156,7 +164,7 @@ class Door(models.Model):
     text = models.TextField("текст", blank=True)
     image = models.ImageField(
         "снимка",
-        upload_to="doors/",
+        upload_to=door_image_path,
         blank=True,
         help_text="По избор. Препоръчително за тип „Снимка“.",
     )

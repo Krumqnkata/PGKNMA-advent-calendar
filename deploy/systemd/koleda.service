@@ -1,0 +1,35 @@
+# Адвент календар – Django през Waitress на 127.0.0.1:8003
+#
+#   sudo cp deploy/systemd/koleda.service /etc/systemd/system/koleda.service
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now koleda
+#   journalctl -u koleda -f          # дневник
+
+[Unit]
+Description=Advent calendar koleda.pgknma.space (Django + Waitress)
+After=network-online.target mysql.service mariadb.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/koleda
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/var/www/koleda/.venv/bin/python serve.py
+Restart=on-failure
+RestartSec=5
+
+# Защита: процесът не може да променя кода си; пише само в media/ (качени снимки).
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ReadWritePaths=/var/www/koleda/media
+
+[Install]
+WantedBy=multi-user.target
