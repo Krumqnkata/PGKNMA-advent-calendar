@@ -9,6 +9,11 @@ updates:
       day: monday
       timezone: Europe/Sofia
     open-pull-requests-limit: 5
+    ignore:
+      # Оставаме на Django 5.2 LTS (поддръжка до април 2028): Django 6.x изисква
+      # MySQL 8.4+, а училищните сървъри обикновено са с MySQL 8.0.
+      - dependency-name: "django"
+        update-types: ["version-update:semver-major"]
     groups:
       django:
         patterns: ["django", "django-*"]
