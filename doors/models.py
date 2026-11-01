@@ -190,24 +190,29 @@ class Door(models.Model):
 # Броячите са в отделни таблици, за да не ги презапише записът на вратичка от админа.
 
 class DoorStats(models.Model):
-    door = models.OneToOneField(
+    """Броячи на една вратичка за една година на календара (не се пренасят в следващата)."""
+
+    door = models.ForeignKey(
         Door,
         on_delete=models.CASCADE,
-        primary_key=True,
         related_name="stats",
         verbose_name="вратичка",
     )
+    year = models.PositiveSmallIntegerField("година")
     opens = models.PositiveIntegerField("отваряния", default=0)
     hearts = models.PositiveIntegerField("сърца", default=0)
     completions = models.PositiveIntegerField("изпълнени предизвикателства", default=0)
 
     class Meta:
-        ordering = ["door__day"]
+        ordering = ["-year", "door__day"]
         verbose_name = "статистика на вратичка"
         verbose_name_plural = "статистика по вратички"
+        constraints = [
+            models.UniqueConstraint(fields=["door", "year"], name="unique_door_stats_per_year"),
+        ]
 
     def __str__(self):
-        return str(self.door)
+        return f"{self.door} ({self.year})"
 
 
 class DailyStats(models.Model):

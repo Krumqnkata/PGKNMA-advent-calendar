@@ -153,6 +153,7 @@
       data-api="{% url 'doors:door-list' %}"
       data-visit-api="{% url 'doors:visit' %}"
       data-today="{{ today_iso }}"
+      data-year="{{ cfg.year|stringformat:'d' }}"
       data-preview="{{ preview|yesno:'1,0' }}"
     >
       <p class="calendar-message">Зареждаме вратичките…</p>

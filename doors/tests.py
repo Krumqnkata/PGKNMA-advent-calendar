@@ -293,3 +293,42 @@ class AdminSecurityTests(TestCase):
         self.client.force_login(get_user_model().objects.get(username="admin"))
         response = self.client.get(reverse("admin:doors_loginattempt_changelist"))
         self.assertContains(response, "admin")
+
+
+class YearSeparationTests(TestCase):
+    def setUp(self):
+        cache.clear()
+        self.door = Door.objects.create(day=1, type="joke", title="Шега", is_published=True)
+
+    def heart(self):
+        return self.client.post(
+            reverse("doors:door-react", args=[1]),
+            data=json.dumps({"action": "heart"}),
+            content_type="application/json",
+        )
+
+    def test_page_exposes_calendar_year_for_browser_storage(self):
+        with on(1):
+            self.assertContains(self.client.get(reverse("doors:index")), 'data-year="2026"')
+
+    def test_door_counts_do_not_carry_over_to_next_year(self):
+        with on(5):
+            self.heart()
+        cfg = AdventSettings.load()
+        cfg.year = 2027
+        cfg.save()
+        with on(5, year=2027):
+            self.assertEqual(self.client.get(reverse("doors:door-detail", args=[1])).json()["hearts"], 0)
+            self.assertEqual(self.heart().json()["hearts"], 1)
+        self.assertEqual(
+            sorted(DoorStats.objects.values_list("year", "hearts")), [(2026, 1), (2027, 1)]
+        )
+
+    def test_admin_door_list_shows_current_year_without_duplicates(self):
+        DoorStats.objects.create(door=self.door, year=2025, hearts=7)
+        DoorStats.objects.create(door=self.door, year=2026, hearts=3)
+        admin = get_user_model().objects.create_superuser("admin", "admin@example.com", "pass")
+        self.client.force_login(admin)
+        response = self.client.get(reverse("admin:doors_door_changelist"))
+        self.assertEqual(response.context["cl"].result_count, 1)
+        self.assertEqual(response.context["cl"].result_list[0].stat_hearts, 3)

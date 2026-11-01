@@ -33,16 +33,16 @@ def record_visit():
     _bump(DailyStats, "visitors", 1, date=unlock.today_sofia())
 
 
-def record_reaction(door, action, active=True):
+def record_reaction(door, year, action, active=True):
     field = ACTIONS[action]
-    _bump(DoorStats, field, 1 if active else -1, door=door)
+    _bump(DoorStats, field, 1 if active else -1, door=door, year=year)
     # Дневната статистика брои само действията, не и отмяната им.
     if active:
         _bump(DailyStats, field, 1, date=unlock.today_sofia())
 
 
-def door_counts(door):
-    counts = DoorStats.objects.filter(door=door).values("hearts", "completions").first()
+def door_counts(door, year):
+    counts = DoorStats.objects.filter(door=door, year=year).values("hearts", "completions").first()
     return counts or {"hearts": 0, "completions": 0}
 
 

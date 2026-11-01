@@ -1,5 +1,5 @@
 from django.contrib import admin, messages
-from django.db.models import F, Max, Value, Window
+from django.db.models import Max, OuterRef, Subquery, Value, Window
 from django.db.models.functions import Coalesce
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -87,10 +87,16 @@ class DoorAdmin(ModelAdmin):
         return obj.type, obj.get_type_display()
 
     def get_queryset(self, request):
+        # Броячите са за текущата година на календара.
+        this_year = DoorStats.objects.filter(door=OuterRef("pk"), year=AdventSettings.load().year)
+
+        def counter(field):
+            return Coalesce(Subquery(this_year.values(field)[:1]), Value(0))
+
         return super().get_queryset(request).annotate(
-            stat_opens=Coalesce(F("stats__opens"), Value(0)),
-            stat_hearts=Coalesce(F("stats__hearts"), Value(0)),
-            stat_completions=Coalesce(F("stats__completions"), Value(0)),
+            stat_opens=counter("opens"),
+            stat_hearts=counter("hearts"),
+            stat_completions=counter("completions"),
         )
 
     @display(description="отваряния", ordering="stat_opens")
@@ -194,9 +200,10 @@ class DailyStatsAdmin(ReadOnlyStatsAdmin):
 
 @admin.register(DoorStats)
 class DoorStatsAdmin(ReadOnlyStatsAdmin):
-    list_display = ("day", "door_title", "door_type", "opens", "hearts", "completions")
+    list_display = ("day", "door_title", "door_type", "year", "opens", "hearts", "completions")
+    list_filter = ("year",)
     list_select_related = ("door",)
-    ordering = ("door__day",)
+    ordering = ("-year", "door__day")
 
     @display(description="ден", ordering="door__day")
     def day(self, obj):

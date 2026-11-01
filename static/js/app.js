@@ -13,16 +13,20 @@
   };
   var DECOS = ["snowflake", "star", "tree", "bell", "sparkle"];
   var SPARK_COLORS = ["#f7e0a3", "#ffffff", "#8fd3c3", "#ff8a9a"];
-  var STORAGE_OPENED = "advent-opened";
-  var STORAGE_COUNTED = "advent-counted";
-  var STORAGE_HEARTS = "advent-hearts";
-  var STORAGE_DONE = "advent-done";
   var STORAGE_VISIT = "advent-visit";
   var STORAGE_MUSIC = "advent-music";
   var LOCKED_MESSAGE = "Още не е време!";
 
   var calendar = document.getElementById("calendar");
   if (!calendar) return;
+
+  // Отворените, харесаните и изпълнените вратички са за конкретна година,
+  // за да не се пренасят в календара за следващата година.
+  var yearKey = "advent-" + calendar.dataset.year + "-";
+  var STORAGE_OPENED = yearKey + "opened";
+  var STORAGE_COUNTED = yearKey + "counted";
+  var STORAGE_HEARTS = yearKey + "hearts";
+  var STORAGE_DONE = yearKey + "done";
 
   var apiBase = calendar.dataset.api;
   var visitApi = calendar.dataset.visitApi;

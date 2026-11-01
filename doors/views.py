@@ -102,7 +102,7 @@ def door_detail(request, day):
             "text": door.text,
             "image": request.build_absolute_uri(door.image.url) if door.image else None,
             "answer": door.answer or None,
-            **stats.door_counts(door),
+            **stats.door_counts(door, cfg.year),
         }
     )
 
@@ -146,5 +146,5 @@ def door_react(request, day):
     if action == "open" and not active:
         return JsonResponse({"detail": "Отварянето не може да се отмени."}, status=400)
 
-    stats.record_reaction(door, action, active)
-    return JsonResponse(stats.door_counts(door))
+    stats.record_reaction(door, cfg.year, action, active)
+    return JsonResponse(stats.door_counts(door, cfg.year))

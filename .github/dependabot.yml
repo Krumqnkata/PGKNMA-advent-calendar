@@ -1,0 +1,19 @@
+# Dependabot: седмични заявки за обновяване на Python пакетите и месечни за GitHub Actions.
+# Предупрежденията за пробиви в сигурността идват отделно (Security → Dependabot alerts).
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Europe/Sofia
+    open-pull-requests-limit: 5
+    groups:
+      django:
+        patterns: ["django", "django-*"]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
